@@ -1,17 +1,47 @@
-# This is a basic workflow to help you get started with Actions
-
 name: Release Snapshot Continuos Integration
-
-# Controls when the workflow will run
 on:
   push:
-    # Sequence of patterns matched against refs/heads
+    branches:
+      - release/[0-9]+.[0-9]+.[0-9]+
+      - hotfix/[0-9]+.[0-9]+.[0-9]+
+  pull_request:
     branches:
       - release/[0-9]+.[0-9]+.[0-9]+
       - hotfix/[0-9]+.[0-9]+.[0-9]+
 
 jobs:
-  BuildDockerImage:
+  Lint-Stage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 12.14.1
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.14.1
+      - name: Get Node_Modules cache directory
+        id: npm-cache
+        run: |
+          echo "::set-output name=dir::$(npm config get cache)"
+      - uses: actions/cache@v2
+        with:
+          path: ${{ steps.npm-cache.outputs.dir }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install dependencies
+        run: yarn install
+      - name: Run lint pre Build Image
+        run: yarn lint
+
+  Test-Stage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log Teste
+        run: echo 'Teste não implementado'
+
+  BuildDockerImage-Stage:
+    if: github.event_name == 'push'
+    needs: [Lint-Stage, Test-Stage]
     name: Build and push Docker Images
     runs-on: ubuntu-latest
     steps:
@@ -29,17 +59,13 @@ jobs:
       - name: Set Repository Name
         run: echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#*\/}" >> $GITHUB_ENV
       - name: Set version image
-        run: echo "IMAGE_VERSION=${GITHUB_REF_NAME#*\/}" >> $GITHUB_ENV
-      - name: echo version image
-        run: echo ${{ env.IMAGE_VERSION }}
-      - name: echo version image Snapshot
-        run: echo ${{ env.IMAGE_VERSION }}-snapshot
-#      - name: Build and push
-#        id: docker_build
-#        uses: docker/build-push-action@v2
-#        with:
-#          push: true
-#          platforms: linux/amd64,linux/arm64
-#          tags: ghcr.io/${{ github.repository_owner }}/${{ env.REPOSITORY_NAME }}:developer
-#      - name: Image digest
-#        run: echo ${{ steps.docker_build.outputs.digest }}
+        run: echo "GHCR_IMAGE_VERSION=${GITHUB_REF_NAME#*\/}" >> $GITHUB_ENV
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ghcr.io/${{ github.repository_owner }}/${{ env.REPOSITORY_NAME }}:${{ env.GHCR_IMAGE_VERSION }}-snapshot
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
