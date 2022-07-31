@@ -5,14 +5,15 @@ RUN mkdir -p /usr/src/app/node_modules && chown -R node:node /usr/src/app
 WORKDIR /usr/src/app
 
 COPY package*.json ./
+COPY yarn.lock ./
 COPY babel.*.js ./
 COPY tsconfig*.json ./
 
-RUN npm i 
+RUN yarn
 
 COPY ./src ./src
 
-RUN npm run build
+RUN yarn build
 
 FROM node:14.18.1-alpine
 
@@ -21,12 +22,13 @@ WORKDIR /usr/app
 ENV NODE_ENV=production
 
 COPY package*.json ./
+COPY yarn.lock ./
 
-RUN npm i --only=production
+RUN yarn install --production
 
 ## We just need the build to execute the command
 COPY --from=builder /usr/src/app/dist ./dist
 
 EXPOSE 3000
 
-CMD ["npm","start"]
+CMD ["yarn","start"]
