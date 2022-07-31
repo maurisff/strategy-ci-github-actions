@@ -54,6 +54,10 @@ export default class App {
       .get((request: Request, response: Response) => {
         response.json({ status: 'OK - V1' })
       })
+    this.app.route('/api/v2')
+      .get((request: Request, response: Response) => {
+        response.json({ status: 'OK - V2' })
+      })
   }
 
   public async initialize (): Promise<void> {
