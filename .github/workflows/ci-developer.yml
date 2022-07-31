@@ -46,16 +46,17 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}      
-      - name: Set tag developer version
-        run: echo "GHCR_IMAGE_TAG_VERSION=ghcr.io/${{ github.repository_owner }}/${GITHUB_REPOSITORY#*\/}:developer" >> $GITHUB_ENV
-      - name: echo tag developer version
-        run: echo $GHCR_IMAGE_TAG_VERSION
+      - name: Set repository name
+        #run: echo "GHCR_IMAGE_TAG_VERSION=ghcr.io/${{ github.repository_owner }}/${GITHUB_REPOSITORY#*\/}:developer" >> $GITHUB_ENV
+        run: echo ::set-output name=repository_name::${GITHUB_REPOSITORY#*\/}
+      - name: echo repository name
+        run: echo ${{ steps.vars.outputs.repository_name }}
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
         with:
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: $GHCR_IMAGE_TAG_VERSION
+          tags: ghcr.io/${{ github.repository_owner }}/${{ steps.vars.outputs.repo_name }}:developer
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
