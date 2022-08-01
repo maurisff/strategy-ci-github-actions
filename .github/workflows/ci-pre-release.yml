@@ -38,10 +38,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: ge GITHUB_HEAD_REF version
+        run: echo GITHUB_HEAD_REF => $GITHUB_HEAD_REF
       - name: Set tag version
-        run: |
-          echo GITHUB_HEAD_REF => $GITHUB_HEAD_REF
-          echo "CI_TAG_VERSION=${GITHUB_HEAD_REF#*\/}" >> $GITHUB_ENV
+        run: echo "CI_TAG_VERSION=${GITHUB_HEAD_REF#*\/}" >> $GITHUB_ENV
       - name: echo tag version
         run: echo $CI_TAG_VERSION
       - name: Create tag
