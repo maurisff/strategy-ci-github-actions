@@ -32,9 +32,8 @@ jobs:
         
 
   PreRelease-Stage:
-
     needs: Test-Stage
-    if: (github.event.pull_request.merged == true && github.event.action == 'closed' && (startsWith(github.head\_ref, 'release/') || startsWith(github.head\_ref, 'hotfix/')))
+    if: ${{ (github.event.pull_request.merged == true && github.event.action == 'closed' && (startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/'))) }}
     name: Pre-Release 
     runs-on: ubuntu-latest
     steps:
