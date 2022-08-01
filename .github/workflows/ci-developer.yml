@@ -9,7 +9,7 @@ on:
       - developer
 
 jobs:
-  Lint-Stage:
+  Test-Stage:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -29,18 +29,12 @@ jobs:
             ${{ runner.os }}-node-
       - name: Install dependencies
         run: yarn install
-      - name: Run lint pre Build Image
-        run: yarn lint
-
-  Test-Stage:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Log Teste
-        run: echo 'Teste não implementado'
+      - name: Run Test pre Build Image
+        run: echo 'Done!'
 
   BuildDockerImage-Stage:
-    if: github.event_name == 'push1'
-    needs: [Lint-Stage, Test-Stage]
+    if: github.event_name == 'push'
+    needs: Test-Stage
     name: Build and push Docker Images
     runs-on: ubuntu-latest
     steps:
