@@ -40,7 +40,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set tag version
-        run: echo "CI_TAG_VERSION=${GITHUB_HEAD_REF#*\/}" >> $GITHUB_ENV
+        run: |
+          echo GITHUB_HEAD_REF => $GITHUB_HEAD_REF
+          echo "CI_TAG_VERSION=${GITHUB_HEAD_REF#*\/}" >> $GITHUB_ENV
       - name: echo tag version
         run: echo $CI_TAG_VERSION
       - name: Create tag
