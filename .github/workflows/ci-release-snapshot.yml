@@ -13,23 +13,23 @@ jobs:
   test-stage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js 12.14.1
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12.14.1
-      - name: Get Node_Modules cache directory
-        id: npm-cache
-        run: |
-          echo "::set-output name=dir::$(npm config get cache)"
-      - uses: actions/cache@v2
-        with:
-          path: ${{ steps.npm-cache.outputs.dir }}
-          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      - name: Install dependencies
-        run: yarn install
+#      - uses: actions/checkout@v2
+#      - name: Use Node.js 12.14.1
+#        uses: actions/setup-node@v1
+#       with:
+#          node-version: 12.14.1
+#      - name: Get Node_Modules cache directory
+#        id: npm-cache
+#        run: |
+#          echo "::set-output name=dir::$(npm config get cache)"
+#      - uses: actions/cache@v2
+#        with:
+#          path: ${{ steps.npm-cache.outputs.dir }}
+#          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+#          restore-keys: |
+#            ${{ runner.os }}-node-
+#      - name: Install dependencies
+#        run: yarn install
       - name: Run Test pre Build Image
         run: echo 'Done!'
 
@@ -39,11 +39,7 @@ jobs:
     name: Build and push Docker Images
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2      
-      - name: Set app version
-        run: npm version ${{ env.GHCR_IMAGE_VERSION }}-snapshot -m "Upgrade app version to %s"
-      - name: Push latest app version
-        run: git push
+      - uses: actions/checkout@v2    
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -57,9 +53,11 @@ jobs:
       - name: Set Repository Name
         run: echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#*\/}" >> $GITHUB_ENV
       - name: Set version image
-        run: echo "GHCR_IMAGE_VERSION=${GITHUB_REF_NAME#*\/}" >> $GITHUB_ENV
+        run: echo "GHCR_IMAGE_VERSION=${GITHUB_REF_NAME#*\/}" >> $GITHUB_ENV  
       - name: Set app version
-        run: npm version ${{ env.CI_TAG_VERSION }}-snapshot -m "Upgrade app version to %s"
+        run: npm version ${{ env.GHCR_IMAGE_VERSION }}-snapshot -m "Upgrade app version to ${{ env.GHCR_IMAGE_VERSION }}-snapshot"
+#      - name: Push latest app version
+#        run: git push
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
