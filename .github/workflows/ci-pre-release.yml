@@ -7,32 +7,32 @@ on:
       - main
 
 jobs:
-  Test-Stage:
+  test-stage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js 12.14.1
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12.14.1
-      - name: Get Node_Modules cache directory
-        id: npm-cache
-        run: |
-          echo "::set-output name=dir::$(npm config get cache)"
-      - uses: actions/cache@v2
-        with:
-          path: ${{ steps.npm-cache.outputs.dir }}
-          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      - name: Install dependencies
-        run: yarn install
+#      - uses: actions/checkout@v2
+#      - name: Use Node.js 12.14.1
+#        uses: actions/setup-node@v1
+#        with:
+#          node-version: 12.14.1
+#      - name: Get Node_Modules cache directory
+#        id: npm-cache
+#        run: |
+#          echo "::set-output name=dir::$(npm config get cache)"
+#      - uses: actions/cache@v2
+#        with:
+#          path: ${{ steps.npm-cache.outputs.dir }}
+#          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+#          restore-keys: |
+#            ${{ runner.os }}-node-
+#      - name: Install dependencies
+#        run: yarn install
       - name: Run Test pre Build Image
         run: echo 'Done!'
         
 
-  PreRelease-Stage:
-    needs: Test-Stage
+  pre-release-stage:
+    needs: test-stage
     if: ${{ (github.event.pull_request.merged == true && github.event.action == 'closed' && (startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/'))) }}
     name: Pre-Release 
     runs-on: ubuntu-latest
@@ -44,6 +44,10 @@ jobs:
         run: echo "CI_TAG_VERSION=${GITHUB_HEAD_REF#*\/}" >> $GITHUB_ENV
       - name: echo tag version
         run: echo $CI_TAG_VERSION
+      - name: Set app version
+        run: npm version ${{ env.CI_TAG_VERSION }} -m "Upgrade app version to %s"
+      - name: Push latest app version
+        run: git push origin main
       - name: Create tag
         uses: actions/github-script@v5
         with:
