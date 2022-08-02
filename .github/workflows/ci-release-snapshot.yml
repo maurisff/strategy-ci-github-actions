@@ -11,6 +11,7 @@ on:
 
 jobs:
   test-stage:
+    name: Teste Stage
     runs-on: ubuntu-latest
     steps:
 #      - uses: actions/checkout@v2
@@ -59,9 +60,9 @@ jobs:
           git config user.name ${{ github.event.pusher.name }}
           git config user.email ${{ github.event.pusher.email }}
       - name: Set app version
-        run: npm version ${{ env.GHCR_IMAGE_VERSION }}-snapshot -m "Upgrade app version to ${{ env.GHCR_IMAGE_VERSION }}-snapshot"
-#      - name: Push latest app version
-#        run: git push
+        run: npm --allow-same-version version ${{ env.GHCR_IMAGE_VERSION }}-snapshot -m "Upgrade app version to ${{ env.GHCR_IMAGE_VERSION }}-snapshot"
+      - name: Push latest app version
+        run: git push
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
