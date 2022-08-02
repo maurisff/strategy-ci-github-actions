@@ -62,7 +62,9 @@ jobs:
       - name: Set app version
         run: npm --allow-same-version version ${{ env.GHCR_IMAGE_VERSION }}-snapshot -m "Upgrade app version to ${{ env.GHCR_IMAGE_VERSION }}-snapshot"
       - name: Push latest app version
-        run: git push
+        run: |
+          git pull
+          git push
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
