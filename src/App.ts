@@ -52,7 +52,7 @@ export default class App {
   private routes (): void {
     this.app.route('/api/v1')
       .get((request: Request, response: Response) => {
-        response.json({ status: 'OK - V1' })
+        response.json({ status: 'OK - V1.1' })
       })
   }
 
