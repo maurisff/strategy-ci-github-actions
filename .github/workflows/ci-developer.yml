@@ -20,7 +20,7 @@ jobs:
         run: echo "Not is pull request of release/hotfix"
       - name: Set version image
         if: ${{ (startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/')) }}
-        run: echo "GHCR_IMAGE_VERSION=${GITHUB_REF_NAME#*\/}" >> $GITHUB_ENV
+        run: echo "GHCR_IMAGE_VERSION=${GITHUB_HEAD_REF#*\/}" >> $GITHUB_ENV
       - name: Setup Git
         if: ${{ (startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/')) }}
         run: |
@@ -96,3 +96,6 @@ jobs:
       - name: Dump GitHub context
         id: github_context_step
         run: echo '${{ toJSON(github) }}'
+      - name: Dump GitHub ENV
+        id: github_context_step
+        run: echo '${{ toJSON(env) }}'
