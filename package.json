@@ -1,6 +1,6 @@
 {
   "name": "strategy-ci-github-actions",
-  "version": "1.1.0-snapshot",
+  "version": "1.2.0-snapshot",
   "description": "strategy-ci-github-actions",
   "main": "dist/Main.js",
   "scripts": {
