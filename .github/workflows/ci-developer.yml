@@ -15,28 +15,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Log Event
-        run: |
-          echo "merged : ${{ github.event.pull_request.merged }}"
-          echo "action : ${{ github.event.action }}"
-          echo "head_ref : ${{ github.head_ref }}"
-          echo "env.head_ref : ${{ env.GITHUB_REF_NAME }}"
       - name: Not is pull request of release/hotfix
-        if: ${{ !(github.event.pull_request.merged == true && github.event.action == 'closed' && (startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/'))) }}
+        if: ${{ !(startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/')) }}
         run: echo "Not is pull request of release/hotfix"
       - name: Set version image
-        if: ${{ (github.event.pull_request.merged == true && github.event.action == 'closed' && (startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/'))) }}
+        if: ${{ (startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/')) }}
         run: echo "GHCR_IMAGE_VERSION=${GITHUB_REF_NAME#*\/}" >> $GITHUB_ENV
       - name: Setup Git
-        if: ${{ (github.event.pull_request.merged == true && github.event.action == 'closed' && (startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/'))) }}
+        if: ${{ (startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/')) }}
         run: |
           git config user.name ${{ github.actor }}
           git config user.email ${{ github.actor }}@users.noreply.github.com
       - name: Set app version
-        if: ${{ (github.event.pull_request.merged == true && github.event.action == 'closed' && (startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/'))) }}
+        if: ${{ (startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/')) }}
         run: npm version ${{ env.GHCR_IMAGE_VERSION }} -m "Upgrade app version to ${{ env.GHCR_IMAGE_VERSION }}"
       - name: Push latest app version
-        if: ${{ (github.event.pull_request.merged == true && github.event.action == 'closed' && (startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/'))) }}
+        if: ${{ (startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/')) }}
         run: |
           git pull
           git push origin developer
