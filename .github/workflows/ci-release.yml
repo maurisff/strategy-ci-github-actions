@@ -51,7 +51,7 @@ jobs:
       - name: Set Repository Name
         run: echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#*\/}" >> $GITHUB_ENV
       - name: Set version image
-        run: echo "GHCR_IMAGE_VERSION=${GITHUB_REF_NAME#*\/}" >> $GITHUB_ENV
+        run: echo "GHCR_IMAGE_VERSION=${GITHUB_HEAD_REF#*\/}" >> $GITHUB_ENV
       - name: Setup Git
         run: |
           git config user.name ${{ github.actor }}
