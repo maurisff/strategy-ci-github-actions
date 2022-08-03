@@ -11,7 +11,7 @@ on:
 
 jobs:
   test-stage:
-    name: Teste Stage
+    name: Test stage pre build
     runs-on: ubuntu-latest
     steps:
 #      - uses: actions/checkout@v2
@@ -35,9 +35,9 @@ jobs:
         run: echo 'Done!'
 
   build-stage:
+    name: Build and push Docker Images
     if: github.event_name == 'push'
     needs: test-stage
-    name: Build and push Docker Images
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2    
