@@ -46,8 +46,8 @@ jobs:
         run: echo $CI_TAG_VERSION
       - name: Setup Git
         run: |
-          git config user.name ${{ github.event.pusher.name }}
-          git config user.email ${{ github.event.pusher.email }}
+          git config user.name maurisff
+          git config user.email mauricio.sff@gmail.com
       - name: Set app version
         run: npm version ${{ env.CI_TAG_VERSION }} -m "Upgrade app version to ${{ env.CI_TAG_VERSION }}"
       - name: Push latest app version
