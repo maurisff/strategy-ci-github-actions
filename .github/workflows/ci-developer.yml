@@ -98,4 +98,4 @@ jobs:
         run: echo '${{ toJSON(github) }}'
       - name: Dump GitHub ENV
         id: github_context_step
-        run: echo '${{ toJSON(env) }}'
+        run: echo '${{ toJSON($GITHUB_ENV) }}'
