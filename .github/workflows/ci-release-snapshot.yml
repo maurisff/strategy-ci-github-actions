@@ -67,7 +67,7 @@ jobs:
           git push
       - name: Build and push
         id: docker_build
-        run: 'Build Done! => ghcr.io/${{ github.repository_owner }}/${{ env.REPOSITORY_NAME }}:${{ env.GHCR_IMAGE_VERSION }}-snapshot'
+        run: 'Build Done! ----- ghcr.io/${{ github.repository_owner }}/${{ env.REPOSITORY_NAME }}:${{ env.GHCR_IMAGE_VERSION }}-snapshot'
 #        uses: docker/build-push-action@v2
 #        with:
 #          push: true
