@@ -9,8 +9,30 @@ on:
       - developer
 
 jobs:
+  developer-app-version-stage:
+    name: Update app verion on pull_request release/hotfix
+    if: ${{ (github.event.pull_request.merged == true && github.event.action == 'closed' && (startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/'))) }}
+    needs: test-stage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set version image
+        run: echo "GHCR_IMAGE_VERSION=${GITHUB_REF_NAME#*\/}" >> $GITHUB_ENV
+      - name: Setup Git
+        run: |
+          git config user.name ${{ github.actor }}
+          git config user.email ${{ github.actor }}@users.noreply.github.com
+      - name: Set app version
+        run: npm version ${{ env.GHCR_IMAGE_VERSION }} -m "Upgrade app version to ${{ env.GHCR_IMAGE_VERSION }}"
+      - name: Push latest app version
+        run: |
+          git pull
+          git push origin developer
+
   test-stage:
     name: Test stage pre build
+    if: ${{ always() }}
+    needs: [developer-app-version-stage]
     runs-on: ubuntu-latest
     steps:
 #      - uses: actions/checkout@v2
