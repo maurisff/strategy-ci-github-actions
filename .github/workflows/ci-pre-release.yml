@@ -31,7 +31,7 @@ jobs:
         run: echo 'Done!'
 
   build-stage:
-    if: github.event_name == 'push'
+#    if: github.event_name == 'push'
     needs: test-stage
     name: Build and push Docker Images
     runs-on: ubuntu-latest
@@ -65,7 +65,7 @@ jobs:
         
 
   pre-release-stage:
-    needs: test-stage
+    needs: build-stage
     if: ${{ (github.event.pull_request.merged == true && github.event.action == 'closed' && (startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/'))) }}
     name: Pre-Release 
     runs-on: ubuntu-latest
